@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Transformadores: construcción y ejercicios</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0e1116; --surface:#161b22; --surface2:#1d242d; --line:#2a323d;
+  --text:#e8edf3; --muted:#a3afbd; --accent:#5ab0ff; --accent2:#f2b366; --ok:#6fd3a0;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:1.125rem;line-height:1.7}
+.wrap{max-width:1040px;margin:0 auto;padding:0 1.5rem}
+section{padding:5rem 0}
+h1,h2,h3{line-height:1.2;margin:0 0 1rem;letter-spacing:-.02em}
+h1{font-size:clamp(2.4rem,6vw,4rem);font-weight:700}
+h2{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:600}
+h3{font-size:1.3rem;font-weight:600}
+p{margin:0 0 1rem;color:var(--muted)}
+.eyebrow{color:var(--accent);font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:.85rem;margin-bottom:1rem}
+.lead{font-size:1.3rem;max-width:34rem}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:rgba(14,17,22,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:1.5rem;padding-top:.9rem;padding-bottom:.9rem;font-size:1rem;overflow-x:auto}
+nav a{color:var(--muted);text-decoration:none;white-space:nowrap}
+nav a:hover{color:var(--text)}
+/* hero */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:3rem;align-items:center;padding:5rem 0 4rem}
+.hero em{font-style:normal;color:var(--accent)}
+.btn{display:inline-block;background:var(--accent);color:#07111c;font-weight:600;padding:.85rem 1.6rem;border-radius:10px;text-decoration:none;margin-top:.8rem}
+.btn:hover{filter:brightness(1.1)}
+.hero svg{width:100%;height:auto}
+.flux{stroke-dasharray:8 8;animation:flow 2.4s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-32}}
+.glow{animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.flux,.glow{animation:none}}
+/* acordeon */
+details{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:.9rem;overflow:hidden}
+summary{cursor:pointer;list-style:none;padding:1.2rem 1.5rem;font-weight:600;font-size:1.2rem;display:flex;justify-content:space-between;gap:1rem}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'+';color:var(--accent);font-size:1.5rem;line-height:1}
+details[open] summary::after{content:'–'}
+details[open]{border-color:#3a4654}
+.body{padding:0 1.5rem 1.4rem}
+.why{border-left:3px solid var(--accent2);padding:.2rem 0 .2rem 1rem;color:var(--text)}
+.why b{color:var(--accent2)}
+/* calculadora */
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:2rem;display:grid;grid-template-columns:1fr 1fr;gap:2.5rem}
+.ctrl{margin-bottom:1.6rem}
+.ctrl label{display:flex;justify-content:space-between;font-weight:500;margin-bottom:.5rem}
+.ctrl output{font-family:var(--mono);color:var(--accent)}
+input[type=range]{width:100%;accent-color:var(--accent);height:28px}
+.eq{font-family:var(--mono);background:var(--surface2);border-radius:10px;padding:.8rem 1rem;font-size:1rem;color:var(--text);margin-bottom:1.2rem}
+.res{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.card{background:var(--surface2);border-radius:12px;padding:1rem 1.2rem}
+.card small{color:var(--muted);display:block;font-size:.9rem}
+.card strong{font-family:var(--mono);font-size:1.7rem;font-weight:500}
+.card.s strong{color:var(--accent2)} .card.p strong{color:var(--accent)}
+.badge{display:inline-block;padding:.3rem .9rem;border-radius:99px;background:var(--surface2);border:1px solid var(--line);font-weight:600;margin:1.2rem 0 .8rem}
+.coils{display:flex;align-items:center;justify-content:center;gap:0;margin:1rem 0}
+.coil{display:flex;flex-direction:column;gap:3px;width:70px}
+.coil i{display:block;height:5px;border-radius:3px}
+.coil.p i{background:var(--accent)} .coil.s i{background:var(--accent2)}
+.core{width:26px;align-self:stretch;background:repeating-linear-gradient(90deg,#3a4654 0 3px,#2a323d 3px 5px);border-radius:3px;min-height:60px}
+.coils-wrap{background:var(--surface2);border-radius:12px;padding:1rem;margin-top:1.2rem}
+.coils-wrap p{text-align:center;margin:0;font-size:.95rem}
+.note{font-size:.95rem}
+/* ejercicios */
+.ex{margin-bottom:1rem}
+.sol{margin-top:.8rem;padding:1rem 1.2rem;background:var(--surface2);border-radius:10px;font-family:var(--mono);font-size:.98rem;color:var(--text);line-height:1.9}
+.sol .ok{color:var(--ok)}
+footer{padding:3rem 0;border-top:1px solid var(--line);text-align:center;font-size:1rem}
+@media (max-width:820px){.hero,.calc{grid-template-columns:1fr}.hero{padding-top:3rem}section{padding:3.5rem 0}.calc{padding:1.4rem}}
+</style>
+</head>
+<body>
+<nav><div class="wrap"><a href="#inicio">Inicio</a><a href="#construccion">Construcción</a><a href="#calculadora">Calculadora</a><a href="#ejercicios">Ejercicios</a></div></nav>
+
+<main class="wrap">
+<header id="inicio" class="hero">
+  <div>
+    <div class="eyebrow">Electromagnetismo aplicado</div>
+    <h1>El <em>transformador</em>: energía que cambia de nivel sin moverse</h1>
+    <p class="lead">Dos devanados, un núcleo y un flujo magnético variable. Aprende cómo se construye físicamente y practica con el modelo del transformador ideal.</p>
+    <a class="btn" href="#calculadora">Ir al simulador</a>
+  </div>
+  <svg viewBox="0 0 320 280" role="img" aria-label="Esquema animado de un transformador con flujo magnético">
+    <rect x="70" y="40" width="180" height="200" rx="8" fill="none" stroke="#3a4654" stroke-width="22"/>
+    <rect class="glow" x="70" y="40" width="180" height="200" rx="8" fill="none" stroke="#5ab0ff" stroke-width="2" class="flux" opacity=".6"/>
+    <rect class="flux" x="70" y="40" width="180" height="200" rx="8" fill="none" stroke="#5ab0ff" stroke-width="2.5"/>
+    <g stroke="#5ab0ff" stroke-width="5" stroke-linecap="round">
+      <line x1="46" y1="80" x2="94" y2="80"/><line x1="46" y1="100" x2="94" y2="100"/><line x1="46" y1="120" x2="94" y2="120"/>
+      <line x1="46" y1="140" x2="94" y2="140"/><line x1="46" y1="160" x2="94" y2="160"/><line x1="46" y1="180" x2="94" y2="180"/>
+    </g>
+    <g stroke="#f2b366" stroke-width="5" stroke-linecap="round">
+      <line x1="226" y1="100" x2="274" y2="100"/><line x1="226" y1="120" x2="274" y2="120"/>
+      <line x1="226" y1="140" x2="274" y2="140"/><line x1="226" y1="160" x2="274" y2="160"/>
+    </g>
+    <text x="20" y="262" fill="#a3afbd" font-size="14" font-family="sans-serif">Primario</text>
+    <text x="228" y="262" fill="#a3afbd" font-size="14" font-family="sans-serif">Secundario</text>
+  </svg>
+</header>
+
+<section id="construccion">
+  <div class="eyebrow">Parte 1</div>
+  <h2>Cómo se construyen</h2>
+  <p>Cada decisión constructiva responde a un problema físico concreto. Abre cada tarjeta para ver el componente y la razón de diseño.</p>
+
+  <details open>
+    <summary>Núcleo ferromagnético</summary>
+    <div class="body">
+      <p>Es el camino de baja reluctancia que confina y conduce el flujo magnético entre el primario y el secundario. Se fabrica con acero al silicio (aleación de hierro con ~3 % de silicio) o, en alta frecuencia, con ferritas.</p>
+      <p class="why"><b>¿Por qué así?</b> Un material ferromagnético tiene una permeabilidad μ muy alta, por lo que casi todo el flujo queda dentro del núcleo y el acoplamiento entre devanados se acerca a la idealidad. El silicio aumenta la resistividad eléctrica y reduce las pérdidas.</p>
+    </div>
+  </details>
+  <details>
+    <summary>Laminación y corrientes de Foucault</summary>
+    <div class="body">
+      <p>El núcleo no es un bloque macizo: se arma con láminas delgadas (≈0.23–0.50 mm) aisladas entre sí con barniz u óxido.</p>
+      <p class="why"><b>¿Por qué así?</b> Por la ley de Faraday, el flujo variable induce fem también dentro del propio hierro y genera lazos de corriente llamados corrientes de Foucault (parásitas), que se disipan como calor (P ∝ f²·B²·t², donde t es el espesor). Al laminar, se corta el área de esos lazos y las pérdidas bajan de forma drástica.</p>
+    </div>
+  </details>
+  <details>
+    <summary>Devanados primario y secundario</summary>
+    <div class="body">
+      <p>Son bobinas de conductor de cobre (o aluminio) esmaltado, enrolladas alrededor del núcleo. El primario recibe la energía y el secundario la entrega a la carga.</p>
+      <p class="why"><b>¿Por qué así?</b> La relación de espiras N<sub>p</sub>/N<sub>s</sub> fija la relación de tensiones. Se elige cobre por su baja resistividad (menos pérdidas I²R) y el esmalte aísla espira con espira. El devanado de mayor corriente usa mayor sección.</p>
+    </div>
+  </details>
+  <details>
+    <summary>Configuraciones: tipo núcleo y tipo acorazado</summary>
+    <div class="body">
+      <p>En el tipo núcleo, los devanados rodean las columnas de un marco rectangular. En el tipo acorazado, el núcleo rodea a los devanados con tres columnas y el flujo se reparte en dos trayectorias.</p>
+      <p class="why"><b>¿Por qué así?</b> Ambas cierran el circuito magnético sin entrehierro apreciable para minimizar la corriente de magnetización. El acorazado reduce el flujo disperso y suele preferirse en potencias menores.</p>
+    </div>
+  </details>
+  <details>
+    <summary>Aislamiento y refrigeración</summary>
+    <div class="body">
+      <p>Se emplean papel aislante, barnices y, en potencia, aceite mineral o aire forzado.</p>
+      <p class="why"><b>¿Por qué así?</b> Las pérdidas en el cobre y en el hierro se convierten en calor; el aislamiento debe soportar la tensión entre devanados y la temperatura de operación sin degradarse, y la refrigeración mantiene esa temperatura bajo control.</p>
+    </div>
+  </details>
+</section>
+
+<section id="calculadora">
+  <div class="eyebrow">Parte 2</div>
+  <h2>Calculadora del transformador ideal</h2>
+  <p>Mueve los controles y observa cómo cambian las tensiones y corrientes. Modelo ideal: sin pérdidas, sin flujo disperso, acoplamiento perfecto.</p>
+  <div class="calc">
+    <div>
+      <div class="ctrl"><label for="np">Espiras del primario, N<sub>p</sub> <output id="npo"></output></label><input id="np" type="range" min="10" max="500" step="10" value="100"></div>
+      <div class="ctrl"><label for="ns">Espiras del secundario, N<sub>s</sub> <output id="nso"></output></label><input id="ns" type="range" min="10" max="500" step="10" value="50"></div>
+      <div class="ctrl"><label for="vp">Tensión del primario, V<sub>p</sub> (rms) <output id="vpo"></output></label><input id="vp" type="range" min="10" max="240" step="1" value="120"></div>
+      <div class="ctrl"><label for="rl">Resistencia de carga, R<sub>L</sub> <output id="rlo"></output></label><input id="rl" type="range" min="1" max="100" step="1" value="10"></div>
+      <div class="eq">V<sub>p</sub>/V<sub>s</sub> = N<sub>p</sub>/N<sub>s</sub> = I<sub>s</sub>/I<sub>p</sub></div>
+      <p class="note">Con la carga conectada: V<sub>s</sub> = V<sub>p</sub>·N<sub>s</sub>/N<sub>p</sub>, I<sub>s</sub> = V<sub>s</sub>/R<sub>L</sub> e I<sub>p</sub> = I<sub>s</sub>·N<sub>s</sub>/N<sub>p</sub>.</p>
+    </div>
+    <div>
+      <div class="res">
+        <div class="card p"><small>Tensión primaria V<sub>p</sub></small><strong id="rvp"></strong></div>
+        <div class="card s"><small>Tensión secundaria V<sub>s</sub></small><strong id="rvs"></strong></div>
+        <div class="card p"><small>Corriente primaria I<sub>p</sub></small><strong id="rip"></strong></div>
+        <div class="card s"><small>Corriente secundaria I<sub>s</sub></small><strong id="ris"></strong></div>
+      </div>
+      <div class="badge" id="tipo"></div>
+      <div class="eq" id="pot"></div>
+      <div class="coils-wrap">
+        <div class="coils"><div class="coil p" id="cp"></div><div class="core"></div><div class="coil s" id="cs"></div></div>
+        <p id="ratio"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ejercicios">
+  <div class="eyebrow">Parte 3</div>
+  <h2>Ejercicios resueltos</h2>
+  <p>Intenta resolverlos primero y luego revisa la solución. Verifica los resultados con la calculadora.</p>
+
+  <details class="ex"><summary>1. Tensión y corrientes con carga</summary><div class="body">
+    <p>Un transformador ideal tiene N<sub>p</sub> = 500 y N<sub>s</sub> = 100. Se alimenta con V<sub>p</sub> = 120 V y alimenta una carga de 12 Ω. Calcula V<sub>s</sub>, I<sub>s</sub> e I<sub>p</sub>.</p>
+    <div class="sol">V<sub>s</sub> = 120 · 100/500 = <span class="ok">24 V</span><br>I<sub>s</sub> = 24/12 = <span class="ok">2 A</span><br>I<sub>p</sub> = 2 · 100/500 = <span class="ok">0.4 A</span></div>
+  </div></details>
+
+  <details class="ex"><summary>2. Diseño de las espiras</summary><div class="body">
+    <p>Se desea convertir 220 V a 12 V con un secundario de 60 espiras. ¿Cuántas espiras debe tener el primario?</p>
+    <div class="sol">N<sub>p</sub> = N<sub>s</sub> · V<sub>p</sub>/V<sub>s</sub> = 60 · 220/12 = <span class="ok">1100 espiras</span></div>
+  </div></details>
+
+  <details class="ex"><summary>3. Conservación de la potencia</summary><div class="body">
+    <p>Un transformador ideal entrega 240 W a 24 V y se conecta a una línea de 120 V. Obtén I<sub>p</sub>, I<sub>s</sub> y la relación de transformación a = N<sub>p</sub>/N<sub>s</sub>.</p>
+    <div class="sol">P<sub>p</sub> = P<sub>s</sub> = 240 W<br>I<sub>s</sub> = 240/24 = <span class="ok">10 A</span><br>I<sub>p</sub> = 240/120 = <span class="ok">2 A</span><br>a = 120/24 = <span class="ok">5</span> (reductor; coincide con I<sub>s</sub>/I<sub>p</sub> = 5)</div>
+  </div></details>
+</section>
+</main>
+
+<footer><div class="wrap"><p>Material de apoyo didáctico. Modelo ideal: en transformadores reales existen pérdidas en el cobre y en el hierro, flujo disperso y corriente de magnetización.</p></div></footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const f=(x,d=2)=>Number(x.toFixed(d)).toString();
+function draw(el,n){const k=Math.max(2,Math.round(n/10*0.6));el.innerHTML='';for(let i=0;i<k;i++)el.appendChild(document.createElement('i'))}
+function update(){
+  const Np=+$('np').value,Ns=+$('ns').value,Vp=+$('vp').value,R=+$('rl').value;
+  const a=Np/Ns,Vs=Vp/a,Is=Vs/R,Ip=Is/a;
+  $('npo').textContent=Np+' esp.';$('nso').textContent=Ns+' esp.';
+  $('vpo').textContent=Vp+' V';$('rlo').textContent=R+' Ω';
+  $('rvp').textContent=f(Vp)+' V';$('rvs').textContent=f(Vs)+' V';
+  $('rip').textContent=f(Ip,3)+' A';$('ris').textContent=f(Is,3)+' A';
+  $('tipo').textContent=Ns>Np?'Transformador elevador':Ns<Np?'Transformador reductor':'Transformador de aislamiento (1:1)';
+  $('pot').innerHTML='P<sub>p</sub> = V<sub>p</sub>·I<sub>p</sub> = '+f(Vp*Ip)+' W = P<sub>s</sub> = '+f(Vs*Is)+' W';
+  $('ratio').innerHTML='a = N<sub>p</sub>/N<sub>s</sub> = '+f(a)+' &nbsp;·&nbsp; V<sub>p</sub>/V<sub>s</sub> = '+f(Vp/Vs)+' &nbsp;·&nbsp; I<sub>s</sub>/I<sub>p</sub> = '+f(Is/Ip);
+  draw($('cp'),Np);draw($('cs'),Ns);
+}
+['np','ns','vp','rl'].forEach(id=>$(id).addEventListener('input',update));
+update();
+</script>
+</body>
+</html>
